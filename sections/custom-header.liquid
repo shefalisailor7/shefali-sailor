@@ -1,0 +1,95 @@
+{% render 'container-css' %}
+
+<style>
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 20px;
+  }
+
+  .svg-arrow svg {
+    display: block;
+    width: 24px;
+    height: auto;
+  }
+
+  .custom-section .navbar{
+    background-color: #F5F5F5;
+  }
+
+  @media screen and (max-width: 991px) {
+    .navbar .container-fluid {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .header-logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-right: 0;
+    }
+  }
+</style>
+
+<div class="custom-section">
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a href="#" class="navbar-brand header-logo">
+                    <img
+                        src="{{ section.settings.logo | img_url: width: 150 }}"
+                        alt="{{ store.name | escape }}"
+                    >
+                </a>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                    {%- if section.settings.title -%}
+                    <p class="mx-auto header-text mb-0 text-center">{{ section.settings.title }}</p>
+                    {%- endif -%}
+
+                    {%- if section.settings.btn_txt -%}
+                    <a href="{{ section.settings.btn_link }}" class="btn btn-primary">
+                        {{ section.settings.btn_txt }}
+                        <span class="svg-arrow">{{- 'Arrow 1.svg' | inline_asset_content -}}</span>
+                    </a>
+                    {%- endif -%}
+                </div>
+            </div>
+        </nav>
+    </header>
+</div>
+
+
+{% schema %}
+{
+    "name": "Custom Header",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Choose Logo"
+        },
+        {
+            "type": "textarea",
+            "id": "title",
+            "label": "Enter Heading Text"
+        },
+        {
+            "type": "text",
+            "id": "btn_txt",
+            "label": "Enter Button Text"
+        },
+        {
+            "type": "url",
+            "id": "btn_link",
+            "label": "Choose Button Link"
+        }
+    ]
+}
+{% endschema %}
