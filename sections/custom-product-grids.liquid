@@ -1,0 +1,458 @@
+{% render 'container-css' %}
+<style>
+  .product-option-group { margin-bottom: 25px; }
+  .option-label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 1.4rem; }
+
+  /* Radio Buttons */
+  .radio-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-item input { display: none; }
+  .radio-item label {
+    border: 1px solid #ddd;
+    padding: 8px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .radio-item input:checked + label {
+    border-color: #000;
+    background-color: #f8f8f8;
+    outline: 1px solid #000;
+  }
+
+  /* Custom Dropdown */
+  .custom-select-wrapper { position: relative; width: 100%; max-width: 300px; user-select: none; }
+  .select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  .select-options {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    margin: 0; padding: 0;
+    list-style: none;
+    display: none;
+    z-index: 100;
+  }
+  .custom-select-wrapper.open .select-options { display: block; }
+  .option { padding: 10px 15px; cursor: pointer; }
+  .option:hover { background: #f0f0f0; }
+
+  .arrow { border: solid #000; border-width: 0 1.5px 1.5px 0; display: inline-block; padding: 3px; transform: rotate(45deg); }
+  .open .arrow { transform: rotate(-135deg); transition: 0.2s; }
+  
+  .product-actions { margin-top: 30px; }
+
+ .custom-product-grid .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 20px;
+  }
+
+  .custom-product-grid .svg-arrow svg {
+    display: block;
+    width: 24px;
+    height: auto;
+  }
+
+.custom-product-grid{
+    padding: 40px 0;
+}
+
+.custom-product-grid h3{
+    font-family: "Lustria", serif;
+    font-weight: 400;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.custom-product-grid .modal-body .img-wrap{
+    width: 40%;
+}
+
+.custom-product-grid .modal-body .product-details{
+    width: 55%;
+}
+
+.custom-product-grid .modal-body .img-wrap img{
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.custom-product-grid  .modal-header{
+    top: 17px;
+    right: 17px;
+}
+
+.product-details h5{
+    margin-top: 19px;
+    margin-bottom: 20px;
+}
+
+.product-details .price{
+    margin-bottom: 12px;
+}
+
+@media screen and (min-width: 992px){
+    .custom-product-grid{
+        padding: 90px 0;
+    }
+
+    .custom-product-grid h3{
+        font-size: 36px;
+        margin-bottom: 30px;
+    }
+}
+
+
+.custom-select-wrapper {
+  position: relative;
+  width: 250px;
+  user-select: none;
+}
+
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #000000;
+  border-top: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: none; /* Hidden by default */
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* When the parent has the .open class, show the menu */
+.custom-select-wrapper.open .select-options {
+  display: block;
+}
+
+.option {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.option:hover {
+  background-color: #f0f0f0;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.open .arrow {
+  transform: rotate(-135deg);
+}
+
+#AddToCart-{{ block.id }}:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+#AddToCart-{{ block.id }}.added {
+  background-color: #2d2d2d;
+}
+
+</style>
+
+
+<div class="custom-section custom-product-grid">
+    <div class="cus-container">
+        <h3 class="text-center text-lg-start">{{ section.settings.title }}</h3>
+
+        {% if section.blocks.size > 0 %}
+        <div class="product-grid row row-cols-2 row-cols-lg-3 g-4">
+            {% for block in section.blocks %}        
+            {% assign product = block.settings.choose_product %}
+            <div class="col">
+                <div class="card rounded-0">
+                    <a href="#" class="img-wrap"  data-bs-toggle="modal" data-bs-target="#modal-{{ product.id }}">
+                        <img src="{{ product.featured_image | image_url: width: 600 }}" class="card-img-top" alt="...">
+                    </a>
+
+                    <div class="modal fade" id="modal-{{ product.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-{{ product.id }}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content rounded-0 border-0">
+                                <div class="modal-header position-absolute p-0 border-0 z-1">
+                                    <span class="lh-1" data-bs-dismiss="modal" aria-label="Close">
+                                        <svg width="12" height="12" viewBox="0 0 15 15" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 13.9994L13.7279 1.2715" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1 1L13.7279 13.7279" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+                                    </span>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="img-wrap">
+                                            <img src="{{ product.featured_image | image_url: width: 600 }}" class="card-img-top" alt="...">
+                                        </div>
+                                        <div class="product-details">
+                                            <h5 class="title">{{ product.title }}</h5>
+                                            <p class="price">{{ product.price | money }}</p>
+                                            <p class="description">{{ product.description }}</p>
+                                        </div>
+                                    </div>
+                                    {%- assign product_form_id = 'product-form-' | append: block.id | append: '-' | append: product.id -%}
+                                    <div class="product-form-container  mt-4" id="ProductSection-{{ block.id }}" data-section="{{ block.id }}">
+                                        <div class="product-form-wrapper">
+                                            
+                                            {%- assign product_form_id = 'product-form-' | append: block.id -%}
+
+                                            {% form 'product', product, id: product_form_id, class: 'product-form', data-productId: product.id %}
+                                            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="VariantId-{{ block.id }}">
+                                            <input type="hidden" name="quantity" value="1" id="VariantId-{{ block.id }}">
+                                            <input type="hidden" name="isBlackMedium" value="false" id="BlackMedium-{{ block.id }}">
+
+                                            <div class="product-option-group">
+                                                <span class="option-label">Color</span>
+                                                <div class="radio-grid">
+                                                {% for value in product.options_by_name['Color'].values %}
+                                                    <div class="radio-item">
+                                                    <input type="radio" 
+                                                            id="color--{{product.id}}-{{ forloop.index }}" 
+                                                            name="color-{{product.id}}" 
+                                                            value="{{ value | escape }}" 
+                                                            {% if product.selected_or_first_available_variant.options contains value %}checked{% endif %}
+                                                            class="variant-input-trigger" data-color-option>
+                                                    <label for="color--{{product.id}}-{{ forloop.index }}">{{ value }}</label>
+                                                    </div>
+                                                {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <div class="product-option-group">
+                                                <span class="option-label">Size</span>
+                                                <div class="custom-select-wrapper" id="SizeDropdown-{{ block.id }}">
+                                                <div class="select-trigger">
+                                                    <span class="selected-value">
+                                                    Choose your size
+                                                    </span>
+                                                    <div class="arrow"></div>
+                                                </div>
+                                                <ul class="select-options">
+                                                    {% for value in product.options_by_name['Size'].values %}
+                                                    <li class="option" data-value="{{ value | escape }}">{{ value }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-actions">
+                                                <button type="submit" name="add" id="AddToCart-{{ block.id }}" class="btn btn-secondary"
+                                                    {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}>
+                                                    {% if product.selected_or_first_available_variant.available %}
+                                                        Add to Cart
+                                                    {% else %}
+                                                        Sold Out
+                                                    {% endif %}
+                                                    <span class="svg-arrow">
+                                                        <svg width="27" height="12" viewBox="0 0 27 12" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0.75 4.77298C0.335786 4.77298 -3.62117e-08 5.10877 0 5.52298C3.62117e-08 5.93719 0.335786 6.27298 0.75 6.27298L0.75 5.52298L0.75 4.77298ZM26.2803 6.05331C26.5732 5.76041 26.5732 5.28554 26.2803 4.99265L21.5074 0.219677C21.2145 -0.0732163 20.7396 -0.0732163 20.4467 0.219677C20.1538 0.512571 20.1538 0.987444 20.4467 1.28034L24.6893 5.52298L20.4467 9.76562C20.1538 10.0585 20.1538 10.5334 20.4467 10.8263C20.7396 11.1192 21.2145 11.1192 21.5074 10.8263L26.2803 6.05331ZM0.75 5.52298L0.75 6.27298L25.75 6.27298L25.75 5.52298L25.75 4.77298L0.75 4.77298L0.75 5.52298Z" fill="#ffffff"/>
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <script type="application/json" id="VariantJson-{{ block.id }}" data-variant-json>
+                                                {{ product.variants | json }}
+                                            </script>
+                                            {% endform %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const wrapper = document.querySelectorAll(`.product-form-container`);
+  const dropdown = document.querySelectorAll(`.custom-select-wrapper`);
+  let currentVariant = null;
+  let currentForm = null;
+  let variantJson = null;
+
+  // --- 1. Custom Dropdown Toggle ---
+  dropdown.forEach(x => {
+    x.querySelector('.select-trigger').addEventListener('click', (e) => {
+        e.currentTarget.closest('.custom-select-wrapper').classList.toggle('open')
+        currentForm =  e.currentTarget.closest('form');
+    });
+  });
+
+  // --- 2. Change Listener (Radio + Dropdown) ---
+  function updateVariant() {
+    console.log(currentForm);
+    const selectedColor = currentForm.querySelector('[data-color-option]:checked').value;
+    const selectedSize = currentForm.querySelector('.selected-value').innerText.trim();
+    variantJson = JSON.parse(currentForm.querySelectorAll('[data-variant-json]').innerHTML);
+console.log(variantJson);
+    // Find matching variant
+    const matchedVariant = variantJson.find(v => 
+      v.options.includes(selectedColor) && v.options.includes(selectedSize)
+    );
+
+    if (matchedVariant) {
+        console.log('---',matchedVariant);
+
+        if((matchedVariant.option1 == 'Black' && matchedVariant.option2 == 'M') || (matchedVariant.option2 == 'Black' && matchedVariant.option1 == 'M')){
+          currentForm.querySelector('[name="isBlackMedium"]').value = true;  
+        } else {
+           currentForm.querySelector('[name="isBlackMedium"]').value = false;   
+        }
+
+      // Update hidden input
+      document.getElementById(`VariantId-${sectionId}`).value = matchedVariant.id;
+      // Update Price
+     // document.getElementById(`Price-${sectionId}`).innerText = Shopify.formatMoney(matchedVariant.price, "{{ shop.money_format }}");
+      // Update Button
+      const btn = document.getElementById(`AddToCart-${sectionId}`);
+      btn.disabled = !matchedVariant.available;
+      btn.innerText = matchedVariant.available ? "Add to Cart" : "Sold Out";
+      
+    }
+  }
+
+  // Handle Radio Changes
+  wrapper.forEach(x => {
+    x.querySelectorAll('[data-color-option]').forEach(radio => { 
+        radio.addEventListener('change', (e) => {
+            currentForm = e.currentTarget.closest('form');
+            updateVariant();
+        });
+    });
+  });
+
+  // Handle Custom Dropdown Selection
+  dropdown.forEach(x => {
+    x.querySelectorAll('.option').forEach(opt => {
+        opt.addEventListener('click', function(e) {
+            e.currentTarget.closest('.custom-select-wrapper').querySelector('.selected-value').innerText = this.innerText;
+            e.currentTarget.closest('.custom-select-wrapper').classList.remove('open');
+            updateVariant();
+        });
+    });
+  });
+
+  // Close dropdown on outside click
+  window.addEventListener('click', (e) => {
+    dropdown.forEach(x => {
+        if (!x.contains(e.target)) x.classList.remove('open');
+    });
+    
+  });
+
+   // --- 3. AJAX Add to Cart Functionality ---
+    const allForms = document.querySelectorAll('.product-form');
+
+    allForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Find the specific button and input inside THIS form only
+        const addItems = [];
+        const submitButton = form.querySelector('[type="submit"]');
+
+        // Visual feedback for this specific button
+        const originalText = submitButton.innerText;
+        submitButton.innerText = "Adding...";
+        submitButton.disabled = true;
+
+        const rawData = new FormData(form);
+    
+        // Convert FormData to a plain JSON object
+        const serializedData = {};
+        rawData.forEach((value, key) => {
+         serializedData[key] = value;
+        });
+
+        console.log(serializedData,'--serializedData');
+
+        addItems.push(serializedData);
+
+        if(form.querySelector('[name="isBlackMedium"]').value == 'true'){
+            addItems.push({
+                id: 53382373048638,
+                quantity: 1
+            });
+        }
+
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            body: JSON.stringify(addItems)
+        })
+        .then(response => response.json())
+        .then(data => {
+           window.location.href = '/cart';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            submitButton.innerText = "Error";
+            submitButton.disabled = false;
+        });
+        });
+    });
+
+
+});
+</script>
+
+
+{% schema %}
+{
+    "name": "Custom Product Grids",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Enter Title"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "product",
+            "name": "Choose Products",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "choose_product",
+                    "label": "Choose Product"
+                }
+            ]
+        }
+    ],
+    "presets" : [
+        {
+            "name": "Custom Product Grids"
+        }
+    ]
+}
+{% endschema %}

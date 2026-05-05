@@ -1,0 +1,212 @@
+{% render 'container-css' %}
+
+<style>
+.custom-section .banner-bottom{
+    background-color: #F5F5F5;
+  }
+
+  .custom-section .banner-bottom p{
+    line-height: 1.2;
+  }
+
+ .custom-banner .hero-section{
+    height: 100vh;
+    min-height: 264px;
+ } 
+
+ .custom-banner .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 20px;
+  }
+
+  .custom-banner .svg-arrow svg {
+    display: block;
+    width: 24px;
+    height: auto;
+  }
+    
+    .banner-content .content-wrapper{
+        background-color: #fff;
+    }
+
+    .banner-content h1{
+        font-weight: 500;
+        font-size: 30px;
+        margin-bottom: 24px;
+    }
+
+    .banner-content p{
+        margin-bottom: 0;
+        letter-spacing: 0;
+    }
+
+    .custom-banner .hero-section svg{
+        height: 100%;
+    }
+
+ @media screen and (min-width: 768px) {
+    .custom-banner .hero-section{
+        height: 100vh;
+        min-height: 780px;
+    } 
+
+    .banner-content{
+        transform: translateY(-30%) !important;
+    }
+
+    .banner-content a{
+        margin-bottom: 50px;
+    }
+
+     .banner-content .content-wrapper{
+        width: 470px;
+        background-color: #fff;
+    }
+
+    .banner-content h1{
+        font-size: 70px;
+        margin-bottom: 50px;
+    }
+
+    .banner-content p{
+        font-size: 20px;
+        margin-bottom: 50px;
+    }
+ }
+
+</style>
+
+<div class="custom-section custom-banner">
+    <div class="postion-relative overflow-hidden">
+        <div class="hero-section desktop_height mobile_height">
+            <div class="single-img-banner h-100">
+                <div class="bimg-wrapper w-100 h-100 position-relative">
+                    {%- if section.settings.image_desktop != blank -%}
+
+                    {% liquid 
+                        assign image = section.settings.image_desktop
+                        assign mobile_image = section.settings.image_mobile | default: image
+                    %}
+                    
+                        <picture class="d-block w-100 h-100">
+                            {% if mobile_image.width >= 1000 %}
+                            <source media="(max-width: 767px)" srcset="{{ image_mobile | image_url: width: 1000, height: 1500 }}">
+                            {% elsif mobile_image.width >= 800 %}
+                            <source media="(max-width: 575px)" srcset="{{ image_mobile | image_url: width: 800, height: 1200 }}">
+                            {% elsif mobile_image.width >= 700 %}
+                            <source media="(max-width: 480px)" srcset="{{ image_mobile | image_url: width: 480, height: 1050 }}">
+                            {% elsif mobile_image.width >= 500 %}
+                            <source media="(max-width: 360px)" srcset="{{ image_mobile | image_url: width: 600, height: 1050 }}">
+                            {% endif %}
+
+                            {% assign sizes = '3800,3300,3000,2800,2560,2200,1901,1700,1400,1200,1100,992,900,800,768,576,450' | split: ',' %}
+                            {% for size in sizes %}
+                                {% assign size_int = size | plus: 0 %}
+                                {% assign size_int_width = size_int | times: 1.2 | round %}
+                                {% if image.width >= size_int %}
+                                <source media="(min-width: {{size_int}}px)" srcset="{{ image | image_url: width: size_int_width }}">
+                                {% endif %}
+                            {% endfor %}
+
+                            <img 
+                                src="{{ image_mobile | image_url: width: 600, height: 900 }}"
+                                alt="{{ store.name | escape }}"
+                                class="w-100 h-100 object-fit-cover"
+                                width="600"
+                                height="900" >
+                        </picture>
+
+                    {% else %}
+                        {{ 'lifestyle-2' | placeholder_svg_tag }}
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+
+        <div class="banner-content position-absolute top-100 start-0">
+            <div class="cus-container">
+                <div class="content-wrapper">
+                    {%- if section.settings.title -%}
+                    <h1 class="">{{ section.settings.title }}</h1>
+                    {%- endif -%}
+
+                    {%- if section.settings.caption -%}
+                    <p class="">{{ section.settings.caption }}</p>
+                    {%- endif -%}
+
+                    {%- if section.settings.btn_txt -%}
+                    <a href="{{ section.settings.btn_link }}"  class="btn btn-secondary">
+                        {{ section.settings.btn_txt }}
+                        <span class="svg-arrow"> 
+                            <svg width="27" height="12" viewBox="0 0 27 12" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.75 4.77298C0.335786 4.77298 -3.62117e-08 5.10877 0 5.52298C3.62117e-08 5.93719 0.335786 6.27298 0.75 6.27298L0.75 5.52298L0.75 4.77298ZM26.2803 6.05331C26.5732 5.76041 26.5732 5.28554 26.2803 4.99265L21.5074 0.219677C21.2145 -0.0732163 20.7396 -0.0732163 20.4467 0.219677C20.1538 0.512571 20.1538 0.987444 20.4467 1.28034L24.6893 5.52298L20.4467 9.76562C20.1538 10.0585 20.1538 10.5334 20.4467 10.8263C20.7396 11.1192 21.2145 11.1192 21.5074 10.8263L26.2803 6.05331ZM0.75 5.52298L0.75 6.27298L25.75 6.27298L25.75 5.52298L25.75 4.77298L0.75 4.77298L0.75 5.52298Z" fill="#ffffff"/>
+                            </svg>
+                        </span>
+                    </a>
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {%- if section.settings.bottom_txt -%}
+        <div class="banner-bottom py-2">
+            <div class="cus-container">
+                <p class="mb-0 text-center">{{ section.settings.bottom_txt }}</p>
+            </div>
+        </div>
+    {%- endif -%}
+</div>
+
+
+
+
+{% schema %}
+{
+    "name": "Custom Header Banner",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "image_desktop",
+            "label": "Choose Image For Desktop"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_mobile",
+            "label": "Choose Image For Mobile"
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Enter Title"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Enter Caption"
+        },
+        {
+            "type": "text",
+            "id": "btn_txt",
+            "label": "Enter Button Text"
+        },
+        {
+            "type": "url",
+            "id": "btn_link",
+            "label": "Choose Button Link"
+        },
+        {
+            "type": "textarea",
+            "id": "bottom_txt",
+            "label": "Enter Bottom Text"
+        }
+    ],
+    "presets" : [
+        {
+            "name": "Custom Banner"
+        }
+    ]
+}
+{% endschema %}
